@@ -117,70 +117,9 @@ def generate_markdown_report(report_filename,
             f.write("A tabela abaixo mostra a simulação com o menor 'OF Value' dentro de cada um dos clusters identificados.\n\n")
             f.write(best_per_cluster_df.to_markdown(index=True, floatfmt=".4f")) # Inclui o Simulation_ID como índice
             f.write("\n*Tabela 3: Melhores simulações representativas de cada cluster.*\n\n")
-
-            # --- Conclusão (Sugestão) ---
-            f.write("---\n\n")
-            f.write("## Próximos Passos (Sugestão)\n\n")
-            f.write("Analisar os parâmetros dos centróides (Tabela 1) e os modelos representativos (Tabela 3) em conjunto com especialistas de domínio (geólogos) para verificar se os diferentes clusters representam cenários geologicamente distintos e plausíveis. Utilizar os modelos representativos para análises de incerteza posteriores.\n")
+            
 
         print(f"Relatório Markdown gerado com sucesso em '{report_filename}'")
 
     except Exception as e:
         print(f"Erro ao gerar o relatório Markdown: {e}")
-
-# --- Bloco de Teste ---
-if __name__ == "__main__":
-    print("\nExecutando report_generator.py como script principal para teste...")
-
-    # Reexecuta todo o pipeline para obter os resultados necessários
-    df_cleaned = data_loader.load_and_clean_data(config.INPUT_FILE)
-    if df_cleaned is not None:
-        df_best = analysis_steps.filter_best_models(df_cleaned, 'OF Value', config.BEST_MODEL_PERCENTILE)
-        if df_best is not None:
-            X_parameters = analysis_steps.select_parameters(df_best)
-            if X_parameters is not None:
-                X_scaled_data, fitted_scaler = analysis_steps.scale_data(X_parameters)
-                if X_scaled_data is not None:
-                    X_pca_data, fitted_pca = analysis_steps.apply_pca(X_scaled_data, config.PCA_VARIANCE_THRESHOLD)
-                    if X_pca_data is not None:
-                        # Gera gráficos Elbow/Silhouette (necessário para contexto do relatório)
-                        clustering.plot_elbow_method(X_pca_data, config.K_RANGE, config.PLOT_ELBOW)
-                        clustering.plot_silhouette_scores(X_pca_data, config.K_RANGE, config.PLOT_SILHOUETTE)
-                        # Aplica K-Means
-                        cluster_labels, kmeans_model = clustering.apply_kmeans(X_pca_data, config.OPTIMAL_K)
-                        if cluster_labels is not None:
-                            df_best['Cluster'] = cluster_labels
-                            X_scaled_data['Cluster'] = cluster_labels # Adiciona ao escalado também
-                            X_parameters['Cluster'] = cluster_labels # Adiciona ao original
-
-                            # Gera os outros gráficos
-                            plotting.plot_of_scatter(df_cleaned, df_best, 'Simulation', 'OF Value', config.PLOT_OF_SCATTER)
-                            plotting.plot_pca_clusters(X_pca_data, cluster_labels, fitted_pca, config.PLOT_PCA_CLUSTERS)
-                            plotting.plot_parameter_boxplots(X_parameters, config.PLOT_BOXPLOTS) # Usa X_parameters original com 'Cluster'
-
-                            # Analisa clusters e OF
-                            centroids_df = clustering.analyze_clusters(df_best, X_scaled_data, kmeans_model, fitted_scaler, fitted_pca, X_parameters.drop('Cluster', axis=1).columns) # Passa nomes sem 'Cluster'
-                            of_stats_df = clustering.analyze_of_by_cluster(df_best, 'OF Value')
-
-                            # Encontra melhores por cluster
-                            idx_best = df_best.groupby('Cluster')['OF Value'].idxmin()
-                            best_per_cluster_df = df_best.loc[idx_best]
-
-                            # Gera o relatório
-                            print("\n--- Teste: Gerando Relatório Markdown ---")
-                            generate_markdown_report(config.OUTPUT_REPORT,
-                                                     df_cleaned,
-                                                     df_best,
-                                                     fitted_pca,
-                                                     kmeans_model,
-                                                     centroids_df,
-                                                     of_stats_df,
-                                                     best_per_cluster_df)
-
-                            print("\nTeste do report_generator.py concluído.")
-                        else: print("Falha no K-Means, pulando geração do relatório.")
-                    else: print("Falha no PCA, pulando geração do relatório.")
-                else: print("Falha no escalonamento, pulando geração do relatório.")
-            else: print("Falha na seleção de parâmetros, pulando geração do relatório.")
-        else: print("Falha na filtragem, pulando geração do relatório.")
-    else: print("Falha no carregamento, pulando geração do relatório.")

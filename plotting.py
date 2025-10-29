@@ -28,9 +28,6 @@ def plot_of_scatter(df_all, df_best, x_col, y_col, filename):
         y_col (str): Nome da coluna para o eixo Y (ex: 'OF Value').
         filename (str): Nome do arquivo para salvar o gráfico.
     """
-    if df_all is None or df_best is None:
-        print("Erro: DataFrames de entrada para plot_of_scatter são None.")
-        return
 
     plt.figure(figsize=(10, 6))
     # Plota todos os pontos
@@ -45,11 +42,9 @@ def plot_of_scatter(df_all, df_best, x_col, y_col, filename):
     plt.title('Dispersão dos Valores da Função Objetivo')
     plt.legend()
     plt.grid(True)
-    try:
-        plt.savefig(filename)
-        print(f"Gráfico de dispersão OF salvo como '{filename}'")
-    except Exception as e:
-        print(f"Erro ao salvar gráfico de dispersão OF: {e}")
+
+    plt.savefig(filename)
+    print(f"Gráfico de dispersão OF salvo como '{filename}'")
     plt.close()
 
 def plot_pca_clusters(X_pca, cluster_labels, pca_model, filename):
@@ -63,12 +58,6 @@ def plot_pca_clusters(X_pca, cluster_labels, pca_model, filename):
         pca_model (PCA): Modelo PCA ajustado para obter a variância explicada.
         filename (str): Nome do arquivo para salvar o gráfico.
     """
-    if X_pca is None or cluster_labels is None or pca_model is None:
-        print("Erro: Entrada inválida para plot_pca_clusters.")
-        return
-    if X_pca.shape[1] < 2:
-        print("Erro: PCA resultou em menos de 2 componentes, não é possível plotar em 2D.")
-        return
 
     plt.figure(figsize=(12, 8))
     unique_clusters = np.unique(cluster_labels)
@@ -90,11 +79,10 @@ def plot_pca_clusters(X_pca, cluster_labels, pca_model, filename):
     plt.ylabel(f'Componente Principal 2 ({pc2_var:.1f}%)')
     plt.legend(title='Cluster')
     plt.grid(True, linestyle='--', alpha=0.6)
-    try:
-        plt.savefig(filename)
-        print(f"Gráfico de clusters PCA salvo como '{filename}'")
-    except Exception as e:
-        print(f"Erro ao salvar gráfico PCA: {e}")
+
+    plt.savefig(filename)
+    print(f"Gráfico de clusters PCA salvo como '{filename}'")
+    
     plt.close()
 
 def plot_parameter_boxplots(X_params_with_clusters, filename):
@@ -126,45 +114,8 @@ def plot_parameter_boxplots(X_params_with_clusters, filename):
 
     plt.suptitle('Distribuição dos Parâmetros por Cluster', fontsize=16, y=1.02) # Título geral
     plt.tight_layout(rect=[0, 0.03, 1, 0.98]) # Ajusta layout para não sobrepor títulos
-    try:
-        plt.savefig(filename)
-        print(f"Gráfico de boxplots salvo como '{filename}'")
-    except Exception as e:
-        print(f"Erro ao salvar gráfico de boxplots: {e}")
+  
+    plt.savefig(filename)
+    print(f"Gráfico de boxplots salvo como '{filename}'")
+    
     plt.close()
-
-
-# --- Bloco de Teste ---
-if __name__ == "__main__":
-    print("\nExecutando plotting.py como script principal para teste...")
-
-    # Reexecuta as etapas necessárias para obter os dataframes e resultados
-    df_cleaned = data_loader.load_and_clean_data(config.INPUT_FILE)
-    if df_cleaned is not None:
-        df_best = analysis_steps.filter_best_models(df_cleaned, 'OF Value', config.BEST_MODEL_PERCENTILE)
-        if df_best is not None:
-            X_parameters = analysis_steps.select_parameters(df_best)
-            if X_parameters is not None:
-                X_scaled_data, fitted_scaler = analysis_steps.scale_data(X_parameters)
-                if X_scaled_data is not None:
-                    X_pca_data, fitted_pca = analysis_steps.apply_pca(X_scaled_data, config.PCA_VARIANCE_THRESHOLD)
-                    if X_pca_data is not None:
-                        cluster_labels, kmeans_model = clustering.apply_kmeans(X_pca_data, config.OPTIMAL_K)
-                        if cluster_labels is not None:
-                            # Adiciona rótulos ao df_best e X_parameters (original)
-                            df_best['Cluster'] = cluster_labels
-                            X_parameters['Cluster'] = cluster_labels # Adiciona ao original para boxplot
-
-                            # Testa as funções de plotagem
-                            print("\n--- Teste: Gerando Gráficos ---")
-                            plot_of_scatter(df_cleaned, df_best, 'Simulation', 'OF Value', config.PLOT_OF_SCATTER)
-                            plot_pca_clusters(X_pca_data, cluster_labels, fitted_pca, config.PLOT_PCA_CLUSTERS)
-                            plot_parameter_boxplots(X_parameters, config.PLOT_BOXPLOTS) # Usa X_parameters original com 'Cluster'
-
-                            print("\nTeste do plotting.py concluído.")
-                        else: print("Falha no K-Means, pulando plots dependentes.")
-                    else: print("Falha no PCA, pulando plots dependentes.")
-                else: print("Falha no escalonamento, pulando plots dependentes.")
-            else: print("Falha na seleção de parâmetros, pulando plots dependentes.")
-        else: print("Falha na filtragem, pulando plots dependentes.")
-    else: print("Falha no carregamento, pulando plots dependentes.")
