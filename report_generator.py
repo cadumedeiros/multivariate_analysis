@@ -4,6 +4,7 @@ Módulo para gerar um relatório resumido da análise de calibração
 em formato Markdown, incluindo tabelas e links para os gráficos.
 """
 
+import os
 import pandas as pd
 import numpy as np # Necessário para np.sum no teste
 import config # Importa as configurações
@@ -70,15 +71,15 @@ def generate_markdown_report(report_filename,
             f.write("## Seleção dos Melhores Modelos\n\n")
             f.write(f"Total de simulações: {len(df_cleaned)}\n")
             f.write(f"Número de modelos selecionados (melhores {config.BEST_MODEL_PERCENTILE*100:.0f}%): {len(df_best)}\n\n")
-            f.write(f"![Gráfico de Dispersão OF]({config.PLOT_OF_SCATTER})\n")
+            f.write(f"![Gráfico de Dispersão OF]({os.path.basename(config.PLOT_OF_SCATTER)})\n")
             f.write("*Gráfico 1: Dispersão dos valores da Função Objetivo (OF). Pontos laranjas indicam os modelos selecionados.*\n\n")
 
             # --- Determinação do Número de Clusters ---
             f.write("## Determinação do Número de Clusters (k)\n\n")
             f.write(f"Foram analisados valores de k no intervalo: {list(config.K_RANGE)}\n\n")
-            f.write(f"![Método do Cotovelo]({config.PLOT_ELBOW})\n")
+            f.write(f"![Método do Cotovelo]({os.path.basename(config.PLOT_ELBOW)})\n")
             f.write("*Gráfico 2: Método do Cotovelo (Inércia vs. k). O 'cotovelo' sugere um k ótimo.*\n\n")
-            f.write(f"![Pontuação de Silhueta]({config.PLOT_SILHOUETTE})\n")
+            f.write(f"![Pontuação de Silhueta]({os.path.basename(config.PLOT_SILHOUETTE)})\n")
             f.write("*Gráfico 3: Pontuação Média de Silhueta vs. k. Valores mais altos indicam melhor separação dos clusters.*\n\n")
             f.write(f"**Número de clusters escolhido (k): {config.OPTIMAL_K}**\n\n")
 
@@ -87,7 +88,7 @@ def generate_markdown_report(report_filename,
             # PCA Plot
             variance_explained = pca_model.explained_variance_ratio_
             total_var_2pc = np.sum(variance_explained[:2]) * 100
-            f.write(f"![Clusters PCA]({config.PLOT_PCA_CLUSTERS})\n")
+            f.write(f"![Clusters PCA]({os.path.basename(config.PLOT_PCA_CLUSTERS)})\n")
             f.write(f"*Gráfico 4: Visualização dos {config.OPTIMAL_K} clusters no espaço dos dois primeiros Componentes Principais (Total Var. Explicada: {total_var_2pc:.1f}%).*\n\n")
 
             # Tamanho dos Clusters
@@ -109,7 +110,7 @@ def generate_markdown_report(report_filename,
 
             # Boxplots
             f.write("### Distribuição dos Parâmetros por Cluster\n\n")
-            f.write(f"![Boxplots Parâmetros]({config.PLOT_BOXPLOTS})\n")
+            f.write(f"![Boxplots Parâmetros]({os.path.basename(config.PLOT_BOXPLOTS)})\n")
             f.write("*Gráfico 5: Boxplots mostrando a distribuição dos valores de cada parâmetro (multiplicador) dentro de cada cluster.*\n\n")
 
             # --- Seleção dos Modelos Representativos ---
