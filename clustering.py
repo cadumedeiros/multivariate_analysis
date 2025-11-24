@@ -33,9 +33,11 @@ def plot_elbow_method(X_pca, k_range, filename):
 
     plt.figure(figsize=(10, 6))
     plt.plot(k_range, inertia, marker='o', linestyle='--')
-    plt.xlabel('Número de Clusters (k)')
-    plt.ylabel('Inércia (WSS)')
-    plt.title('Método do Cotovelo para Determinar k Ótimo')
+    plt.xlabel('Número de Clusters (k)', fontsize=18)
+    plt.ylabel('Inércia (WSS)', fontsize=18)
+    plt.title('Método do Cotovelo para Determinar k Ótimo', fontsize=18)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.xticks(list(k_range))
     plt.grid(True)
  
@@ -75,9 +77,11 @@ def plot_silhouette_scores(X_pca, k_range, filename):
 
     plt.figure(figsize=(10, 6))
     plt.plot(k_range, silhouette_scores, marker='o', linestyle='--')
-    plt.xlabel('Número de Clusters (k)')
-    plt.ylabel('Pontuação Média de Silhueta')
-    plt.title('Análise da Pontuação de Silhueta para Determinar k Ótimo')
+    plt.xlabel('Número de Clusters (k)', fontsize=18)
+    plt.ylabel('Pontuação Média de Silhueta', fontsize=18)
+    plt.title('Análise da Pontuação de Silhueta para Determinar k Ótimo', fontsize=18)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.xticks(list(k_range))
     plt.grid(True)
     try:

@@ -13,6 +13,15 @@ import data_loader # Para teste
 import analysis_steps # Para teste
 import clustering # Para teste
 
+plt.rcParams.update({
+    "font.size": 14,
+    "axes.titlesize": 20,
+    "axes.labelsize": 22,
+    "legend.fontsize": 14,
+    "xtick.labelsize": 14,
+    "ytick.labelsize": 14,
+})
+
 # Configurações de estilo para os gráficos (opcional, mas melhora a aparência)
 sns.set_theme(style="whitegrid")
 
@@ -37,9 +46,11 @@ def plot_of_scatter(df_all, df_best, x_col, y_col, filename):
     plt.plot(df_best[x_col], df_best[y_col], marker='o', linestyle='None',
              label=f'Melhores {config.BEST_MODEL_PERCENTILE*100:.0f}%')
 
-    plt.xlabel('Simulação')
-    plt.ylabel('Valor da Função Objetivo (OF)')
-    plt.title('Dispersão dos Valores da Função Objetivo')
+    plt.xlabel('Simulação', fontsize=18)
+    plt.ylabel('Valor da Função Objetivo (OF)', fontsize=18)
+    plt.title('Dispersão dos Valores da Função Objetivo', fontsize=18)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.legend()
     plt.grid(True)
 
@@ -74,10 +85,12 @@ def plot_pca_clusters(X_pca, cluster_labels, pca_model, filename):
     pc2_var = variance_explained[1] * 100
     total_var = np.sum(variance_explained[:2]) * 100
 
-    plt.title(f'Clusters no Espaço PCA (Total Var. Explicada nos 2 PCs: {total_var:.1f}%)')
-    plt.xlabel(f'Componente Principal 1 ({pc1_var:.1f}%)')
-    plt.ylabel(f'Componente Principal 2 ({pc2_var:.1f}%)')
-    plt.legend(title='Cluster')
+    plt.title(f'Clusters no Espaço PCA (Total Var. Explicada nos 2 PCs: {total_var:.1f}%)', fontsize=18)
+    plt.xlabel(f'Componente Principal 1 ({pc1_var:.1f}%)', fontsize=18)
+    plt.ylabel(f'Componente Principal 2 ({pc2_var:.1f}%)', fontsize=18)
+    plt.legend(title='Cluster', fontsize=14, title_fontsize=16)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.grid(True, linestyle='--', alpha=0.6)
 
     plt.savefig(filename)
@@ -108,11 +121,13 @@ def plot_parameter_boxplots(X_params_with_clusters, filename):
     for i, column in enumerate(parameter_cols):
         plt.subplot(n_rows, n_cols, i + 1)
         sns.boxplot(x='Cluster', y=column, data=X_params_with_clusters)
-        plt.title(f'{column}')
-        plt.xlabel('Cluster') # Opcional, pode remover se ficar muito cheio
-        plt.ylabel('Valor do Multiplicador') # Opcional
+        plt.title(f'{column}', fontsize=14)
+        plt.xlabel('Cluster', fontsize=14) # Opcional, pode remover se ficar muito cheio
+        plt.ylabel('Valor do Multiplicador', fontsize=14) # Opcional
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=14)
 
-    plt.suptitle('Distribuição dos Parâmetros por Cluster', fontsize=16, y=1.02) # Título geral
+    plt.suptitle('Distribuição dos Parâmetros por Cluster', fontsize=22, y=1.02) # Título geral
     plt.tight_layout(rect=[0, 0.03, 1, 0.98]) # Ajusta layout para não sobrepor títulos
   
     plt.savefig(filename)

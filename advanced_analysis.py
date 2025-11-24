@@ -34,11 +34,13 @@ def hierarchical_clustering(X_pca, method='ward', max_clusters=10, filename=None
     print("\n--- Hierarchical Clustering ---")
     linkage_matrix = linkage(X_pca, method=method)
     
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(12, 8))
     dendrogram(linkage_matrix, truncate_mode='level', p=5)
-    plt.title(f"Dendrograma - Método {method.capitalize()}")
-    plt.xlabel("Amostras")
-    plt.ylabel("Distância Euclidiana")
+    plt.title(f"Dendrograma - Método {method.capitalize()}", fontsize=18)
+    plt.xlabel("Amostras", fontsize=18)
+    plt.ylabel("Distância Euclidiana", fontsize=18)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
     
     if filename:
         plt.savefig(filename)
@@ -112,8 +114,10 @@ def lda_analysis(X_scaled, cluster_labels, feature_names=None, filename=None):
     if filename:
         plt.figure(figsize=(10, 5))
         coef_series.plot(kind='bar')
-        plt.title("Coeficientes Discriminantes (LDA)")
-        plt.ylabel("Importância Relativa")
+        plt.title("Coeficientes Discriminantes (LDA)", fontsize=18)
+        plt.ylabel("Importância Relativa", fontsize=18)
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=14)
         plt.tight_layout()
         plt.savefig(filename)
         plt.close()
