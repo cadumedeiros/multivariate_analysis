@@ -9,13 +9,18 @@ Importa e executa funções dos módulos:
 - report_generator: Cria o relatório final em Markdown.
 """
 
+import pandas as pd
+import os
+
 import config
 import data_loader
 import analysis_steps
 import clustering
 import plotting
 import report_generator
-import pandas as pd # Necessário para salvar arquivos Excel aqui
+import advanced_analysis
+
+
 
 def main():
     """Função principal que executa a análise."""
@@ -61,6 +66,40 @@ def main():
     centroids_df = clustering.analyze_clusters(df_best, X_scaled_data, kmeans_model, fitted_scaler, fitted_pca, parameter_columns)
     of_stats_df = clustering.analyze_of_by_cluster(df_best, 'OF Value')
 
+    # --- Etapa 9: Análises Avançadas ---
+    print("\n--- Etapa 9: Análises Avançadas ---")
+
+    # 1. Hierarchical Clustering
+    hier_clusters = advanced_analysis.hierarchical_clustering(
+        X_pca_data,
+        max_clusters=config.OPTIMAL_K,
+        filename=config.PLOT_DENDROGRAM
+    )
+
+    # guarda no df dos melhores
+    df_best['Cluster_H'] = hier_clusters
+
+    # 2. Validação
+    validation_kmeans = advanced_analysis.validate_clusters(X_pca_data, cluster_labels)
+    validation_hier   = advanced_analysis.validate_clusters(X_pca_data, hier_clusters)
+
+    # 3. LDA
+    lda_results = advanced_analysis.lda_analysis(
+    X_scaled_data.drop(columns=['Cluster']),
+    cluster_labels,
+    filename=os.path.join(config.RESULTS_DIR, "grafico_coeficientes_LDA.png")
+    )
+
+    # 4. ANOVA (OF Value)
+    anova_table = advanced_analysis.anova_by_cluster(df_best, 'OF Value')
+
+    # 5. Tabela de comparação k-means x hierárquico (só pra logar/olhar)
+    contingency = pd.crosstab(df_best['Cluster'], df_best['Cluster_H'])
+    print("\n--- Tabela K-Means x Hierárquico ---")
+    print(contingency)
+
+
+
     # 9. Gerar Gráficos de Visualização
     print("\n--- Etapa 9: Gerando Gráficos de Visualização ---")
     plotting.plot_of_scatter(df_cleaned, df_best, 'Simulation', 'OF Value', config.PLOT_OF_SCATTER)
@@ -89,7 +128,13 @@ def main():
                                                 kmeans_model, # Passando o modelo kmeans
                                                 centroids_df,
                                                 of_stats_df,
-                                                best_per_cluster_df)
+                                                best_per_cluster_df,
+                                                validation_metrics={
+                                                "kmeans": validation_kmeans,
+                                                "hierarchical": validation_hier
+                                            },
+                                                lda_results=lda_results,
+                                                anova_table=anova_table)
 
     print("\n--- Pipeline de Análise de Calibração Concluído ---")
 

@@ -8,10 +8,6 @@ import os
 import pandas as pd
 import numpy as np # Necessário para np.sum no teste
 import config # Importa as configurações
-import data_loader # Para teste
-import analysis_steps # Para teste
-import clustering # Para teste
-import plotting # Para teste (indiretamente via clustering no teste)
 from datetime import datetime # Para adicionar data/hora ao relatório
 
 def generate_markdown_report(report_filename,
@@ -21,7 +17,10 @@ def generate_markdown_report(report_filename,
                                kmeans_model, # Passando o modelo kmeans para obter n_clusters
                                centroid_df,
                                of_stats_df,
-                               best_per_cluster_df):
+                               best_per_cluster_df,
+                               validation_metrics=None,
+                                lda_results=None,
+                                anova_table=None):
     """
     Gera um relatório da análise em formato Markdown.
 
@@ -112,6 +111,44 @@ def generate_markdown_report(report_filename,
             f.write("### Distribuição dos Parâmetros por Cluster\n\n")
             f.write(f"![Boxplots Parâmetros]({os.path.basename(config.PLOT_BOXPLOTS)})\n")
             f.write("*Gráfico 5: Boxplots mostrando a distribuição dos valores de cada parâmetro (multiplicador) dentro de cada cluster.*\n\n")
+            
+            # --- Nova Seção: Validação e Análises Avançadas ---
+            f.write("## Validação dos Clusters e Análises Avançadas\n\n")
+
+            # Seção 1: Métricas de Validação
+            if validation_metrics:
+                f.write("### Métricas de Validação dos Clusters\n\n")
+                for method_name, metrics in validation_metrics.items():
+                    f.write(f"#### {method_name.capitalize()}\n\n")
+                    f.write("| Métrica | Valor |\n|:--|--:|\n")
+                    for metric, value in metrics.items():
+                        f.write(f"| {metric} | {value:.3f} |\n")
+                    f.write("\n")
+
+            # Seção 2: Hierarchical Clustering
+            if os.path.exists(config.PLOT_DENDROGRAM):
+                f.write("### Clusterização Hierárquica (Método de Ward)\n\n")
+                f.write(f"![Dendrograma]({os.path.basename(config.PLOT_DENDROGRAM)})\n")
+                f.write("*Gráfico 6: Dendrograma mostrando a hierarquia entre os clusters. Alturas menores indicam grupos mais semelhantes.*\n\n")
+
+            # Seção 3: Análise Discriminante Linear
+            if lda_results is not None and isinstance(lda_results, pd.Series):
+                f.write("### Análise Discriminante Linear (LDA)\n\n")
+                f.write("A análise discriminante linear identifica os parâmetros com maior poder de separação entre os clusters formados. Coeficientes positivos e negativos indicam a direção da influência de cada parâmetro.\n\n")
+                f.write(lda_results.to_frame("Coeficiente").to_markdown(floatfmt=".4f"))
+                f.write("\n*Tabela 4: Coeficientes discriminantes médios por parâmetro.*\n\n")
+                if os.path.exists(config.PLOT_LDA_COEF):
+                    f.write(f"![Coeficientes LDA]({os.path.basename(config.PLOT_LDA_COEF)})\n")
+                    f.write("*Gráfico 7: Importância relativa dos parâmetros na separação dos clusters segundo a LDA.*\n\n")
+
+            # Seção 4: ANOVA
+            if anova_table is not None:
+                f.write("### Teste Estatístico de Diferenças entre Clusters (ANOVA)\n\n")
+                f.write("A ANOVA testa se as médias do valor da Função Objetivo (ou outras variáveis) diferem significativamente entre os clusters.\n\n")
+                f.write(anova_table.to_markdown(floatfmt=".4f"))
+                f.write("\n*Tabela 5: Resultado da ANOVA aplicada sobre a variável 'OF Value'. p-values inferiores a 0.05 indicam diferença estatisticamente significativa.*\n\n")
+
+
 
             # --- Seleção dos Modelos Representativos ---
             f.write("## Seleção dos Modelos Representativos ('Campeões' por Cluster)\n\n")

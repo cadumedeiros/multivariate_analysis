@@ -7,7 +7,7 @@ Armazena constantes como nomes de arquivos, parâmetros de análise e nomes de g
 import os
 
 # --- Arquivos de Entrada/Saída ---
-INPUT_FILE = '5_well_7param_RangeMaior_35x40.xlsx'
+INPUT_FILE = 'Uncertain_parameters_and_OF_values.xlsx'
 
 # Diretório de resultados baseado no nome do arquivo de entrada
 _input_stem = os.path.splitext(os.path.basename(INPUT_FILE))[0]
@@ -20,10 +20,10 @@ OUTPUT_BEST_PER_CLUSTER = os.path.join(RESULTS_DIR, 'melhores_simulacoes_por_gru
 OUTPUT_REPORT = os.path.join(RESULTS_DIR, 'relatorio_analise_calibracao.md')
 
 # --- Parâmetros da Análise ---
-BEST_MODEL_PERCENTILE = 0.30  # Percentil para selecionar os melhores modelos (30%)
+BEST_MODEL_PERCENTILE = 0.50  # Percentil para selecionar os melhores modelos (30%)
 PCA_VARIANCE_THRESHOLD = 0.95 # Variância a ser mantida pelo PCA (95%)
 K_RANGE = range(2, 11)        # Intervalo de 'k' para testar no Elbow/Silhouette
-OPTIMAL_K = 10                 # Número de clusters escolhido (baseado na sua análise)
+OPTIMAL_K = 5                 # Número de clusters escolhido (baseado na sua análise)
 
 # --- Nomes dos Arquivos de Gráfico ---
 # Salvamos as imagens dentro do diretório de resultados
@@ -32,5 +32,10 @@ PLOT_ELBOW = os.path.join(RESULTS_DIR, 'grafico_metodo_cotovelo.png')
 PLOT_SILHOUETTE = os.path.join(RESULTS_DIR, 'grafico_pontuacao_silhueta.png')
 PLOT_PCA_CLUSTERS = os.path.join(RESULTS_DIR, 'grafico_clusters_pca.png')
 PLOT_BOXPLOTS = os.path.join(RESULTS_DIR, 'grafico_boxplots_parametros.png')
+
+# Arquivos para análises avançadas
+PLOT_DENDROGRAM = os.path.join(RESULTS_DIR, "grafico_dendrograma.png")
+PLOT_LDA_COEF = os.path.join(RESULTS_DIR, "grafico_coeficientes_LDA.png")
+
 
 print("Configurações carregadas.")
