@@ -15,6 +15,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
+import os
 
 import config
 
@@ -39,11 +40,16 @@ def hierarchical_clustering(X_pca, method='ward', max_clusters=10, filename=None
     plt.title(f"Dendrograma - Método {method.capitalize()}", fontsize=18)
     plt.xlabel("Amostras", fontsize=18)
     plt.ylabel("Distância Euclidiana", fontsize=18)
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     
     if filename:
-        plt.savefig(filename)
+        root, _ = os.path.splitext(filename)
+        png_path = root + ".png"
+        pdf_path = root + ".pdf"
+
+        plt.savefig(png_path, bbox_inches="tight", pad_inches=0)
+        plt.savefig(pdf_path, bbox_inches="tight", pad_inches=0)
         print(f"Dendrograma salvo em '{filename}'")
     plt.close()
 
@@ -119,7 +125,12 @@ def lda_analysis(X_scaled, cluster_labels, feature_names=None, filename=None):
         plt.xticks(fontsize=14)
         plt.yticks(fontsize=14)
         plt.tight_layout()
-        plt.savefig(filename)
+        root, _ = os.path.splitext(filename)
+        png_path = root + ".png"
+        pdf_path = root + ".pdf"
+
+        plt.savefig(png_path, bbox_inches="tight", pad_inches=0)
+        plt.savefig(pdf_path, bbox_inches="tight", pad_inches=0)
         plt.close()
         print(f"Gráfico LDA salvo em '{filename}'")
 

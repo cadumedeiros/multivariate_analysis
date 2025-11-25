@@ -9,9 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
-import config # Importa as configurações
-import data_loader # Para teste
-import analysis_steps # Para teste
+import os
 
 def plot_elbow_method(X_pca, k_range, filename):
     """
@@ -41,7 +39,11 @@ def plot_elbow_method(X_pca, k_range, filename):
     plt.xticks(list(k_range))
     plt.grid(True)
  
-    plt.savefig(filename)
+    root, _ = os.path.splitext(filename)
+    png_path = root + ".png"
+    pdf_path = root + ".pdf"
+    plt.savefig(png_path, bbox_inches="tight", pad_inches=0)
+    plt.savefig(pdf_path, bbox_inches="tight", pad_inches=0)
     print(f"Gráfico do Método do Cotovelo salvo como '{filename}'")
     plt.close()
 
@@ -85,7 +87,11 @@ def plot_silhouette_scores(X_pca, k_range, filename):
     plt.xticks(list(k_range))
     plt.grid(True)
     try:
-        plt.savefig(filename)
+        root, _ = os.path.splitext(filename)
+        png_path = root + ".png"
+        pdf_path = root + ".pdf"
+        plt.savefig(png_path, bbox_inches="tight", pad_inches=0)
+        plt.savefig(pdf_path, bbox_inches="tight", pad_inches=0)
         print(f"Gráfico da Pontuação de Silhueta salvo como '{filename}'")
     except Exception as e:
         print(f"Erro ao salvar gráfico da Silhueta: {e}")

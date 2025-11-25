@@ -23,7 +23,7 @@ OUTPUT_REPORT = os.path.join(RESULTS_DIR, 'relatorio_analise_calibracao.md')
 BEST_MODEL_PERCENTILE = 0.50  # Percentil para selecionar os melhores modelos (30%)
 PCA_VARIANCE_THRESHOLD = 0.95 # Variância a ser mantida pelo PCA (95%)
 K_RANGE = range(2, 11)        # Intervalo de 'k' para testar no Elbow/Silhouette
-OPTIMAL_K = 5                 # Número de clusters escolhido (baseado na sua análise)
+OPTIMAL_K = 4                 # Número de clusters escolhido (baseado na sua análise)
 
 # --- Nomes dos Arquivos de Gráfico ---
 # Salvamos as imagens dentro do diretório de resultados

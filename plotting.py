@@ -9,18 +9,8 @@ import seaborn as sns
 import pandas as pd
 import numpy as np # Importado para o teste
 import config # Importa as configurações
-import data_loader # Para teste
-import analysis_steps # Para teste
-import clustering # Para teste
+import os
 
-plt.rcParams.update({
-    "font.size": 14,
-    "axes.titlesize": 20,
-    "axes.labelsize": 22,
-    "legend.fontsize": 14,
-    "xtick.labelsize": 14,
-    "ytick.labelsize": 14,
-})
 
 # Configurações de estilo para os gráficos (opcional, mas melhora a aparência)
 sns.set_theme(style="whitegrid")
@@ -54,7 +44,11 @@ def plot_of_scatter(df_all, df_best, x_col, y_col, filename):
     plt.legend()
     plt.grid(True)
 
-    plt.savefig(filename)
+    root, _ = os.path.splitext(filename)
+    png_path = root + ".png"
+    pdf_path = root + ".pdf"
+    plt.savefig(png_path, bbox_inches="tight", pad_inches=0)
+    plt.savefig(pdf_path, bbox_inches="tight", pad_inches=0)
     print(f"Gráfico de dispersão OF salvo como '{filename}'")
     plt.close()
 
@@ -93,7 +87,11 @@ def plot_pca_clusters(X_pca, cluster_labels, pca_model, filename):
     plt.yticks(fontsize=14)
     plt.grid(True, linestyle='--', alpha=0.6)
 
-    plt.savefig(filename)
+    root, _ = os.path.splitext(filename)
+    png_path = root + ".png"
+    pdf_path = root + ".pdf"
+    plt.savefig(png_path, bbox_inches="tight", pad_inches=0)
+    plt.savefig(pdf_path, bbox_inches="tight", pad_inches=0)
     print(f"Gráfico de clusters PCA salvo como '{filename}'")
     
     plt.close()
@@ -129,8 +127,12 @@ def plot_parameter_boxplots(X_params_with_clusters, filename):
 
     plt.suptitle('Distribuição dos Parâmetros por Cluster', fontsize=22, y=1.02) # Título geral
     plt.tight_layout(rect=[0, 0.03, 1, 0.98]) # Ajusta layout para não sobrepor títulos
-  
-    plt.savefig(filename)
+    
+    root, _ = os.path.splitext(filename)
+    png_path = root + ".png"
+    pdf_path = root + ".pdf"
+    plt.savefig(png_path, bbox_inches="tight", pad_inches=0)
+    plt.savefig(pdf_path, bbox_inches="tight", pad_inches=0)
     print(f"Gráfico de boxplots salvo como '{filename}'")
     
     plt.close()
